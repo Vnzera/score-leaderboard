@@ -2,6 +2,7 @@ import { Repository, EntityRepository } from 'typeorm';
 import { User } from './user.entity';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { ConflictException, InternalServerErrorException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -9,10 +10,10 @@ export class UserRepository extends Repository<User> {
         // destructure/pull username and password from authCredDto
         const { username, password } = authCredentialsDto;
 
-        // create new entry for the user
         const user = new User();
         user.username = username;
-        user.password = password;
+        user.salt = await bcrypt.genSalt();
+        user.password = await this.hashPassword(password, user.salt);
         user.score = 0;
 
         // if a query throws an error but isn't handled then nestjs will throw a 500 server error by default
@@ -26,5 +27,9 @@ export class UserRepository extends Repository<User> {
                 throw new InternalServerErrorException();
             }
         }
+    }
+
+    private async hashPassword(password: string, salt: string): Promise<string> {
+        return bcrypt.hash(password, salt);
     }
 }
