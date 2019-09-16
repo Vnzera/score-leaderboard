@@ -14,5 +14,8 @@ export class User extends BaseEntity {
     password: string;
 
     @Column()
+    salt: string;
+
+    @Column()
     score: number;
 }
