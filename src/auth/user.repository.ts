@@ -29,6 +29,21 @@ export class UserRepository extends Repository<User> {
         }
     }
 
+    async validateUserPassword(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+        const { username, password } = authCredentialsDto;
+        const user = await this.findOne({ username });
+
+        // we can use a custom method to run business logic against a specific user/entity
+        // simply create the method on the entity ie user.validatePassword
+
+        // if the username exists and the passwords match...
+        if (user && await user.validatePassword(password)) {
+            return user.username;
+        } else {
+            return null;
+        }
+    }
+
     private async hashPassword(password: string, salt: string): Promise<string> {
         return bcrypt.hash(password, salt);
     }
