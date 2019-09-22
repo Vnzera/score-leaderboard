@@ -1,6 +1,5 @@
 import { IsString, MinLength, MaxLength, Matches } from 'class-validator';
 
-
 // this data will be used in many places such as the sign up and sign in route
 // we can  use the class-validator package to set validation rules that work well with the validation pipe from nestjs
 

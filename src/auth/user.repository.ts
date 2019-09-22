@@ -21,6 +21,8 @@ export class UserRepository extends Repository<User> {
         try {
             await user.save();
         } catch (error) {
+            // @Unique decorator in the entity file is handling unique usernames
+            // this validation happens at the database level
             if (error.code === '23505') {
                 throw new ConflictException('Username already exists');
             } else {
